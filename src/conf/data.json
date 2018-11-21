@@ -1,0 +1,67 @@
+[
+  {
+    "title": "修改账户类型",
+    "icon": "",
+    "type": "form",
+    "params": [{
+      "key": "accountType",
+      "value": "用户类型",
+      "type": "select",
+      "options": [{
+          "key": "企业",
+          "value": 0
+        },
+        {
+          "key": "个人",
+          "value": 1
+        }
+      ]
+    }]
+  },
+  {
+    "class": "wx",
+    "icon": "wechat",
+    "title": "微信开发相关设置",
+    "desc": "描述",
+		"children": [
+      {
+        "title": "修改账户类型",
+        "icon": "",
+        "type": "form",
+        "params": [{
+          "key": "accountType",
+          "value": "用户类型",
+          "type": "select",
+          "options": [{
+              "key": "企业",
+              "value": 0
+            },
+            {
+              "key": "个人",
+              "value": 1
+            }
+          ]
+        }]
+      },
+      {
+        "title": "修改账户类型",
+        "icon": "",
+        "type": "form",
+        "params": [{
+          "key": "accountType",
+          "value": "用户类型",
+          "type": "select",
+          "options": [{
+              "key": "企业",
+              "value": 0
+            },
+            {
+              "key": "个人",
+              "value": 1
+            }
+          ]
+        }]
+      }
+    ]
+  }
+]
