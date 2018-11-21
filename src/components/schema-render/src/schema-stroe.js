@@ -27,4 +27,8 @@ SchemaStore.prototype.getNodeName = function (node) {
   return nodeInfo.name ? nodeInfo.name : nodeInfo
 }
 
+SchemaStore.prototype.openModal = function () {
+  // TODO 打开模态框
+}
+
 export default SchemaStore
