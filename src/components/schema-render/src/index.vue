@@ -103,7 +103,7 @@
         {
           'class': { 'l-schema': true }
         },
-        parseSchema(h, this.schema).map(function (item) {
+        parseSchema(this.schema).map(function (item) {
           return h(
             SchemaWrap,
             {
