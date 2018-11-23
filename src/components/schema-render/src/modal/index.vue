@@ -11,10 +11,30 @@
       v-if="contentType === 'form'"
       :schema="propsData.params"
     ></SchemaForm>
+
+    <!-- Footer -->
+    <div
+			class="dialog-footer"
+			slot="footer"
+		>
+			<elRow type="flex" justify="center">
+]					<elButton
+						type="primary"
+						:loading="loading"
+						@click="save"
+					>
+          保存
+						<!-- {{ $t('app.word.save') }} -->
+					</elButton>
+			</elRow>
+		</div>
+
   </elDialog>
 </template>
 
 <script>
+  import { apiPost } from '@/services'
+  import { handleErr } from '@/utils'
   import { modalMixin } from '@/mixins/modal'
   import SchemaForm from './form'
 
@@ -27,6 +47,7 @@
 
     data() {
       return {
+        loading: false
       }
     },
 
@@ -45,6 +66,20 @@
             throw new Error(`module [${title}] field 'type' is illegal`)
           }
         }
+      }
+    },
+
+    methods: {
+      save() {
+        const url = '/'
+        const { search } = this
+        apiPost(url, search).then(res => {
+          if (res.statusCode === 0) {
+            this.$message(res.message)
+          } else {
+            handleErr(res.message)
+          }
+        })
       }
     },
 

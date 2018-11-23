@@ -10,23 +10,6 @@
       v-model="search[i.key]"
     />
 
-    <!-- Footer -->
-    <div
-			class="dialog-footer"
-			slot="footer"
-		>
-			<elRow type="flex" justify="center">
-]					<elButton
-						type="primary"
-						:loading="loading"
-						@click="save"
-					>
-          保存
-						<!-- {{ $t('app.word.save') }} -->
-					</elButton>
-			</elRow>
-		</div>
-
   </elForm>
 </template>
 <script>
