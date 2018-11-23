@@ -1,6 +1,6 @@
-
+import Vue from 'vue'
 const SchemaStore = function(ele, initialState = {}) {
-  this.schema = ele
+  this.body = ele
 
   this.states = {
     tree: [],
@@ -27,8 +27,18 @@ SchemaStore.prototype.getNodeName = function (node) {
   return nodeInfo.name ? nodeInfo.name : nodeInfo
 }
 
-SchemaStore.prototype.openModal = function () {
-  // TODO 打开模态框
+SchemaStore.prototype.openModal = function (data = {}, states = {}) {
+  const { body } = this
+  Vue.nextTick(() => body.openModal('schema', 'schema', data, states))
 }
+
+// SchemaStore.prototype.commit = function(name, ...args) {
+//   const mutations = this.mutations;
+//   if (mutations[name]) {
+//     mutations[name].apply(this, [this.states].concat(args));
+//   } else {
+//     throw new Error(`Action not found: ${name}`);
+//   }
+// }
 
 export default SchemaStore

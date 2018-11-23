@@ -25,9 +25,9 @@
     "desc": "描述",
 		"children": [
       {
-        "title": "修改账户类型",
+        "title": "微信商户进件",
         "icon": "",
-        "type": "form",
+        "type": "table",
         "params": [{
           "key": "accountType",
           "value": "用户类型",
@@ -44,7 +44,7 @@
         }]
       },
       {
-        "title": "修改账户类型",
+        "title": "微信开发配置",
         "icon": "",
         "type": "form",
         "params": [{

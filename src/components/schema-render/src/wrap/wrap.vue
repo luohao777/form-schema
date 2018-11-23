@@ -1,7 +1,8 @@
+
 <script>
+  import Button from '../button'
   // TODO 抽出 header body
   function setChildVNode(h, { store, wrapType, type = '', icon = '', title = '', desc = '', params = [], children = [] } = {}) {
-    const button = store.getNodeName('button')
     let header = (
       <div slot="header" className="schema-wrap-hearder">
         { title }
@@ -10,44 +11,59 @@
 
     let body = (<div className="schema-wrap-body">
       <i>{ icon }</i>
-      <p>{ desc }</p>
+      <p>{ desc || '暂无描述' }</p>
     </div>)
 
     let footer
-    // TODO 将openModal写入store中，在点击按钮时，带上各自的parmas && opcode 等信息
+    let footerChildrenNode
+
     if (wrapType === 'class') {
-      const childrenNode = children.map(item => {
+      // 遍历出多个button
+      footerChildrenNode = children.map(item => {
+        const config = {
+          wrapType,
+          type: item.type,
+          title: item.title,
+          desc: item.desc,
+          params: item.params
+        }
         return h(
-          button,
+          Button,
           {
-            domProps: {
-              innerHTML: item.title
+            props: {
+              store,
+              config
             }
           }
         )
       })
-      footer = h(
-        'div',
-        {
-          class: {
-            'schema-wrap-footer': true
-          }
-        },
-        [ ...childrenNode ]
-      )
     } else {
-      footer = h(
-        button,
+      // 无需外部包裹
+      footerChildrenNode = [h(
+        Button,
         {
-          class: {
-            'schema-wrap-footer': true
-          },
-          domProps: {
-            innerHTML: title
+          props: {
+            store,
+            config: {
+              wrapType,
+              type,
+              title,
+              desc,
+              params
+            }
           }
         }
-      )
+      )]
     }
+    footer = h(
+      'div',
+      {
+        class: {
+          'schema-wrap-footer': true
+        }
+      },
+      [ ...footerChildrenNode ]
+    )
     return [ header, body, footer ]
   }
 
@@ -57,7 +73,7 @@
     props: {
       store: Object,
       icon: String,
-      title: {
+      title: { // form 表单 table 表格
         type: String,
         required: true
       },
@@ -65,7 +81,7 @@
       type: String,
       params: Array,
       children: Array,
-      wrapType: String
+      wrapType: String // class 类 module 单个模块
     },
 
     render(h) {

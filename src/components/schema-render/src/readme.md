@@ -1,9 +1,3 @@
-|- Schema
-|
-|-- Wrap
-|
-|----
-
 
 
 ├── Schema

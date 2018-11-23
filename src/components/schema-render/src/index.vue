@@ -1,4 +1,6 @@
 <script>
+  import { modalParentMixin } from '@/mixins/modal'
+
   import SchemaWrap from './wrap/wrap'
   import SchemaStore from './schema-stroe'
   import SchemaModal from './modal'
@@ -68,10 +70,40 @@
     return result
   }
 
+  function setModal(h) {
+    const { modal, closeModal } = this
+    return h(
+      SchemaModal,
+      {
+        props: {
+          propsKey: 'schema',
+          propsName: 'schema',
+          propsState: modal.schema.state,
+          propsData: modal.schema.data,
+          propsVisible: modal.schema.visible
+        },
+        on: {
+          close: closeModal
+        }
+      }
+    )
+
+    // return <SchemaModal
+    //           propsKey='schema'
+    //           propsName='schema'
+    //           props-state={modal.schema.state}
+    //           props-data={modal.schema.data}
+    //           props-visible={modal.schema.visible}
+    //           nativeOn-close={closeModal}>
+    //       </SchemaModal>
+  }
+
   export default {
     name: 'schema',
 
     components: { SchemaWrap, SchemaModal },
+
+    mixins: [ modalParentMixin ],
 
     props: {
       // component - component Name  Mapping
@@ -86,13 +118,25 @@
       }
     },
 
+    mounted() {
+      console.log(this)
+    },
+
     data() {
       const store = new SchemaStore(this, {
         schema: this.schema,
         map: this.map
       })
       return {
-        store
+        store,
+        modal: {
+          schema: {
+						name: 'schema',
+						visible: false,
+						data: {},
+						state: {}
+          }
+        }
       }
     },
 
@@ -103,18 +147,23 @@
         {
           'class': { 'l-schema': true }
         },
-        parseSchema(this.schema).map(function (item) {
-          return h(
-            SchemaWrap,
-            {
-              key: item.key,
-              props: {
-                store,
-                ...item.props
+        [
+          // All wraps
+          ...parseSchema(this.schema).map(function (item) {
+            return h(
+              SchemaWrap,
+              {
+                key: item.key,
+                props: {
+                  store,
+                  ...item.props
+                }
               }
-            }
-          )
-        })
+            )
+          }),
+          // Modal
+          setModal.call(this, h)
+        ]
       )
     }
   }

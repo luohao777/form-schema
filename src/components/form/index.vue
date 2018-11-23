@@ -1,6 +1,5 @@
 <template>
   <div>
-    我是测试form
     <schema
       :schema="config"
       :map="map"
