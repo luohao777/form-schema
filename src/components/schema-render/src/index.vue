@@ -1,21 +1,10 @@
 <script>
   import { modalParentMixin } from '@/mixins/modal'
+	import { EMPTY_FUNCTION, moduleDefaultProperty } from './config'
 
   import SchemaWrap from './wrap/wrap'
   import SchemaStore from './schema-stroe'
   import SchemaModal from './modal'
-
-  const moduleDefaultProperty = {
-    type: '',
-    disable: false,
-    show: true,
-    batch: false,
-    icon: '',
-    title: '',
-    opcode: '',
-    desc: '',
-    params: null
-  }
 
   function parseSchema(s) {
     const tree = []
@@ -71,31 +60,23 @@
   }
 
   function setModal(h) {
-    const { modal, closeModal } = this
+    const { store, modal, closeModal } = this
     return h(
       SchemaModal,
       {
         props: {
+					store,
           propsKey: 'schema',
           propsName: 'schema',
           propsState: modal.schema.state,
           propsData: modal.schema.data,
-          propsVisible: modal.schema.visible
+					propsVisible: modal.schema.visible
         },
         on: {
           close: closeModal
         }
       }
     )
-
-    // return <SchemaModal
-    //           propsKey='schema'
-    //           propsName='schema'
-    //           props-state={modal.schema.state}
-    //           props-data={modal.schema.data}
-    //           props-visible={modal.schema.visible}
-    //           nativeOn-close={closeModal}>
-    //       </SchemaModal>
   }
 
   export default {
@@ -115,17 +96,32 @@
       schema: {
         type: Array,
         required: true
-      }
-    },
-
-    mounted() {
-      console.log(this)
+			},
+			api: String,
+			// 来自外部交互数据，非Schema交互产生的Data，会在请求时传入参数最外层
+			data: {
+				type: Object,
+				default() {
+					return {}
+				}
+			},
+			// 是否为批量操作模式
+			batch: {
+				type: Boolean,
+				default() {
+					return false
+				}
+			}
     },
 
     data() {
+			const { schema, map, data, batch, api } = this
       const store = new SchemaStore(this, {
-        schema: this.schema,
-        map: this.map
+        schema,
+				map,
+				data,
+				batch,
+				api
       })
       return {
         store,
@@ -138,34 +134,59 @@
           }
         }
       }
-    },
+		},
+
+		watch: {
+			batch(val) {
+				this.store.states.batch = val
+			},
+			data: {
+				deep: true,
+				handler: function (val) {
+					if (val) {
+						this.store.states.data = val
+					} else {
+						this.store.states.data = {}
+					}
+				}
+			}
+		},
 
     render(h) {
-      const { store } = this
+			const { store, schema } = this
+			const cards = parseSchema(schema)
+			const cardsVNode = cards.map(item => {
+				return h(
+					SchemaWrap,
+					{
+						key: item.key,
+						props: {
+							store,
+							propsData: { ...item.props }
+						},
+						nativeOn: {
+							click: item.props.wrapType === 'module'
+									?	function () {
+											store.openModal(item.props)
+										}
+									: EMPTY_FUNCTION
+						}
+					}
+				)
+			})
+			// 渲染组件
       return h(
         'div',
         {
-          'class': { 'l-schema': true }
+					class: 'l-schema'
         },
         [
-          // All wraps
-          ...parseSchema(this.schema).map(function (item) {
-            return h(
-              SchemaWrap,
-              {
-                key: item.key,
-                props: {
-                  store,
-                  ...item.props
-                }
-              }
-            )
-          }),
+					// Card wraps
+					...cardsVNode,
           // Modal
           setModal.call(this, h)
         ]
       )
     }
   }
-
 </script>

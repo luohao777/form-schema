@@ -5,12 +5,30 @@
     :title="propsData.title"
     @close="close()"
     append-to-body
-    width="500px"
+    width="800px"
   >
+		<!-- Form -->
     <SchemaForm
-      v-if="contentType === 'form'"
       :schema="propsData.params"
-    ></SchemaForm>
+			:data="search"
+      :contentType="contentType"
+			@change="handlerChange"
+    />
+
+    <!-- Content -->
+    <div
+      class="resWrap"
+      v-if="contentType === 'form'"
+
+    >
+      <elInput
+        v-model="res"
+        type="textarea"
+        :autosize="{ minRows: 2 }"
+        :disabled="disabled"
+      >
+      </elInput>
+    </div>
 
     <!-- Footer -->
     <div
@@ -18,14 +36,31 @@
 			slot="footer"
 		>
 			<elRow type="flex" justify="center">
-]					<elButton
-						type="primary"
-						:loading="loading"
-						@click="save"
-					>
-          保存
-						<!-- {{ $t('app.word.save') }} -->
-					</elButton>
+        <!-- Save -->
+				<elButton
+					v-if="contentType === 'form'"
+					type="primary"
+					:loading="loading"
+					@click="save"
+				>
+					{{ $t('app.word.save') }}
+				</elButton>
+
+        <!-- Query -->
+        <elButton
+          v-else
+          type="primary"
+          :loading="loading"
+          @click="onSearch"
+        >
+          {{ $t('app.word.view') }}
+        </elButton>
+
+				<elButton
+					@click="close()"
+				>
+					{{ $t('app.word.cancel') }}
+				</elButton>
 			</elRow>
 		</div>
 
@@ -34,7 +69,7 @@
 
 <script>
   import { apiPost } from '@/services'
-  import { handleErr } from '@/utils'
+  import { handleErr, parseData } from '@/utils'
   import { modalMixin } from '@/mixins/modal'
   import SchemaForm from './form'
 
@@ -43,11 +78,18 @@
 
     components: { SchemaForm },
 
-    mixins: [modalMixin],
+		mixins: [modalMixin],
+
+		props: {
+			store: Object
+		},
 
     data() {
       return {
-        loading: false
+				loading: false,
+        search: {},
+        res: '',
+        disabled: true
       }
     },
 
@@ -71,16 +113,52 @@
 
     methods: {
       save() {
-        const url = '/'
-        const { search } = this
-        apiPost(url, search).then(res => {
-          if (res.statusCode === 0) {
-            this.$message(res.message)
+				this.loading = true
+				// Schema 表单产生的数据
+				const { search } = this
+				// 全局data: From 来自组件传输, 非Schema 交互产生的数据;
+				const { data, api } = this.store.states
+				// Module Data: 每个模块里独有的数据
+				const { data: moduleData } = this.propsData
+				const postData = {
+					...data,
+					...moduleData,
+					params: { ...search }
+				}
+        apiPost(api, postData).then(res => {
+          if (res.statusCode === 200) {
+						this.$message(res.message)
+						this.search = {}
+						this.close()
           } else {
             handleErr(res.message)
           }
-        })
-      }
+        }).then(this.loading = false)
+			},
+
+			onSearch() {
+        // 全局data: 来自组件传输, 非Schema 交互产生的数据;
+				const { data, api } = this.store.states
+				// Module Data: 每个模块里独有的数据
+				const { data: moduleData } = this.propsData
+				const postData = {
+					...data,
+					...moduleData
+				}
+        apiPost(api, postData).then(res => {
+          if (res.statusCode === 200) {
+            this.$message(res.message)
+            this.disabled = true
+						this.res = res.content
+          } else {
+            handleErr(res.message)
+          }
+        }).then(this.loading = false)
+			},
+
+			handlerChange(val) {
+				this.search = parseData(val)
+			}
     },
 
     watch: {
@@ -91,5 +169,10 @@
 			}
 		}
   }
-
 </script>
+
+<style lang="less" scoped>
+.resWrap {
+  margin: 10px 30px;
+}
+</style>

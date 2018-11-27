@@ -3,12 +3,13 @@ const SchemaStore = function(ele, initialState = {}) {
   this.body = ele
 
   this.states = {
-    tree: [],
+		api: '',
     sortOrder: null,
     data: null,
-    schema: null,
+		schema: null,
+		batch: false,
     filters: {},
-    map: null
+		map: null
   }
 
   for (let prop in initialState) {
@@ -31,14 +32,5 @@ SchemaStore.prototype.openModal = function (data = {}, states = {}) {
   const { body } = this
   Vue.nextTick(() => body.openModal('schema', 'schema', data, states))
 }
-
-// SchemaStore.prototype.commit = function(name, ...args) {
-//   const mutations = this.mutations;
-//   if (mutations[name]) {
-//     mutations[name].apply(this, [this.states].concat(args));
-//   } else {
-//     throw new Error(`Action not found: ${name}`);
-//   }
-// }
 
 export default SchemaStore

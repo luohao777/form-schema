@@ -1,6 +1,10 @@
 <template>
   <elForm
     :model="search"
+		:class="contentType !== 'table' ? 'l_dialog_form' : 'searchBar'"
+		label-position="right"
+		:label-width="formLabelWidth"
+		@submit.native.prevent
   >
     <SchemaFormItem
       v-for="(i, index) in schema"
@@ -13,15 +17,22 @@
   </elForm>
 </template>
 <script>
-  import SchemaFormItem from './formItem'
+	import SchemaFormItem from './formItem'
+	import formLabelWidth from '@/mixins/formLabel'
 
   export default {
     name: 'schema-form',
 
-    components: { SchemaFormItem },
+		components: { SchemaFormItem },
+
+		mixins: [ formLabelWidth ],
 
     props: {
-      schema: Array
+			schema: Array,
+
+      data: Object,
+
+      contentType: String
     },
 
     data() {
@@ -29,12 +40,17 @@
         search: {},
         loading: false
       }
-    },
+		},
 
-    methods: {
-      save() {
-        console.log(this.search)
-      }
-    }
+		watch: {
+			search: {
+				deep: true,
+				handler(val) {
+					if (val) {
+						this.$emit('change', val)
+					}
+				}
+			}
+		}
   }
 </script>

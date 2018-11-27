@@ -1,21 +1,98 @@
-[
-  {
+[{
     "title": "修改账户类型",
-    "icon": "",
-    "type": "form",
+    "icon": "alipay",
+    "type": "query",
+    "batch": 1,
+    "data": {
+      "opcode": "accountType"
+    },
+    "params": [{
+        "key": "accountType",
+        "value": "用户类型",
+        "type": "select",
+        "options": [{
+          "key": "企业",
+          "value": 0
+        }, {
+          "key": "个人",
+          "value": 1
+        }]
+      },
+      {
+        "key": "accountType",
+        "value": "用户类型",
+        "type": "select",
+        "options": [{
+          "key": "企业",
+          "value": 0
+        }, {
+          "key": "个人",
+          "value": 1
+        }]
+      }
+    ]
+  },
+  {
+    "title": "查询订单",
+    "icon": "jd",
+    "type": "query",
+    "batch": 1,
+    "data": {
+      "opcode": "accountType"
+    },
     "params": [{
       "key": "accountType",
       "value": "用户类型",
       "type": "select",
       "options": [{
-          "key": "企业",
-          "value": 0
-        },
-        {
-          "key": "个人",
-          "value": 1
-        }
-      ]
+        "key": "企业",
+        "value": 0
+      }, {
+        "key": "个人",
+        "value": 1
+      }]
+    }]
+  },
+  {
+    "title": "查询",
+    "icon": "alipay",
+    "type": "form",
+    "batch": 1,
+    "data": {
+      "opcode": "accountType"
+    },
+    "params": [{
+      "key": "accountType",
+      "value": "用户类型",
+      "type": "select",
+      "options": [{
+        "key": "企业",
+        "value": 0
+      }, {
+        "key": "个人",
+        "value": 1
+      }]
+    }]
+  },
+  {
+    "title": "QQ",
+    "icon": "qq",
+    "type": "form",
+    "batch": 1,
+    "data": {
+      "opcode": "accountType"
+    },
+    "params": [{
+      "key": "accountType",
+      "value": "用户类型",
+      "type": "select",
+      "options": [{
+        "key": "企业",
+        "value": 0
+      }, {
+        "key": "个人",
+        "value": 1
+      }]
     }]
   },
   {
@@ -23,45 +100,43 @@
     "icon": "wechat",
     "title": "微信开发相关设置",
     "desc": "描述",
-		"children": [
-      {
-        "title": "微信商户进件",
-        "icon": "",
-        "type": "table",
-        "params": [{
-          "key": "accountType",
-          "value": "用户类型",
-          "type": "select",
-          "options": [{
-              "key": "企业",
-              "value": 0
-            },
-            {
-              "key": "个人",
-              "value": 1
-            }
-          ]
-        }]
+    "children": [{
+      "title": "微信商户进件",
+      "icon": "wechat",
+      "type": "table",
+      "data": {
+        "opcode": "apply"
       },
-      {
-        "title": "微信开发配置",
-        "icon": "",
-        "type": "form",
-        "params": [{
-          "key": "accountType",
-          "value": "用户类型",
-          "type": "select",
-          "options": [{
-              "key": "企业",
-              "value": 0
-            },
-            {
-              "key": "个人",
-              "value": 1
-            }
-          ]
+      "batch": 1,
+      "params": [{
+        "key": "accountType",
+        "value": "用户类型",
+        "type": "select",
+        "options": [{
+          "key": "企业",
+          "value": 0
+        }, {
+          "key": "个人",
+          "value": 1
         }]
-      }
-    ]
+      }]
+    }, {
+      "title": "微信开发配置",
+      "icon": "",
+      "batch": 1,
+      "type": "form",
+      "data": {
+        "opcode": "upload"
+      },
+      "params": [{
+        "key": "appid",
+        "value": "Appid",
+        "type": "input"
+      }, {
+        "key": "secret",
+        "value": "secret",
+        "type": "input"
+      }]
+    }]
   }
 ]

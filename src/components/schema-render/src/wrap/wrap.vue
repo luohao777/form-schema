@@ -1,21 +1,33 @@
 
 <script>
-  import Button from '../button'
+	import Button from '../button'
+
+	const iconMap = {
+		wechat: 'icon-weixin',
+		qq: 'icon-QQ',
+		alipay: 'icon-zhifubao',
+		jd: 'icon-weibiaoti-'
+	}
+
   // TODO 抽出 header body
-  function setChildVNode(h, { store, wrapType, type = '', icon = '', title = '', desc = '', params = [], children = [] } = {}) {
-    let header = (
-      <div slot="header" className="schema-wrap-hearder">
-        { title }
+  function setChildVNode(h, { store, wrapType, type = '', icon = '', title = '', desc = '', data = {}, params = [], children = [] } = {}) {
+		const { batch: isBatch } = store.states	// 是否为多选模式
+    const header = (
+			<div slot="header" class="schema-wrap-hearder">
+				<i class={ ['iconfont', iconMap[icon]] }></i>
+				<span>
+					{ title }
+				</span>
       </div>
     )
 
-    let body = (<div className="schema-wrap-body">
-      <i>{ icon }</i>
-      <p>{ desc || '暂无描述' }</p>
+    const body = (<div class="schema-wrap-body">
+			<p v-show={desc}>{ desc }</p>
+			<p v-show={!desc} class="noDesc">{ '暂无描述' }</p>
     </div>)
 
     let footer
-    let footerChildrenNode
+    let footerChildrenNode = []
 
     if (wrapType === 'class') {
       // 遍历出多个button
@@ -25,7 +37,8 @@
           type: item.type,
           title: item.title,
           desc: item.desc,
-          params: item.params
+					params: item.params,
+					data: item.data
         }
         return h(
           Button,
@@ -33,28 +46,14 @@
             props: {
               store,
               config
-            }
+						},
+						'style': {
+							'display': isBatch && !item.batch ? 'none' : 'inline-block'
+						}
           }
         )
       })
-    } else {
-      // 无需外部包裹
-      footerChildrenNode = [h(
-        Button,
-        {
-          props: {
-            store,
-            config: {
-              wrapType,
-              type,
-              title,
-              desc,
-              params
-            }
-          }
-        }
-      )]
-    }
+		}
     footer = h(
       'div',
       {
@@ -71,44 +70,107 @@
     name: 'schema-wrap',
 
     props: {
-      store: Object,
-      icon: String,
-      title: { // form 表单 table 表格
-        type: String,
-        required: true
-      },
-      desc: String,
-      type: String,
-      params: Array,
-      children: Array,
-      wrapType: String // class 类 module 单个模块
+			store: Object,
+			propsData: Object
+			// batch: [Boolean, Number],
+			// opcode: String,
+      // icon: String,
+      // title: { // form 表单 table 表格
+      //   type: String,
+      //   required: true
+      // },
+      // desc: String,
+      // type: String,
+      // params: Array,
+			// children: Array,
+      // wrapType: String // class 类 module 单个模块
     },
 
+		// 单个Wrap, 其中存在 Header, body, Footer 三个子节点
     render(h) {
-      const { wrapType, type, icon, title, desc, children, params } = this
-      const { store } = this
-      const warpName = store.getNodeName('wrap')
+			const { store, propsData } = this
+			const { wrapType, batch, children } = propsData
+			const warpName = store.getNodeName('wrap')
+
+			const { batch: isBatch } = store.states	// 是否为多选模式
+			let show = true
+			if (isBatch) {
+				if (wrapType === 'module') {
+					show = !!batch
+				} else if (wrapType === 'class') {
+					const arr = children.map(i => i.batch)
+					show = !arr.every(i => !i) // 全部不支持多选时, 不做渲染
+				}
+			}
+
       return h(
         warpName,
         {
           'class': {
-            'schema-wrap': true
-          }
+						'schema-wrap': true,
+						[`schema-${wrapType}`]: true
+					},
+					style: {
+						display: show ? '' : 'none'
+					},
+					props: {
+						shadow: 'hover'
+					}
         },
         [
-          ...setChildVNode.call(this, h, { store, wrapType, type, icon, title, desc, children, params })
+          ...setChildVNode.call(this, h, { store, ...propsData })
         ]
       )
     }
   }
-
 </script>
 
-<style lang="less" scoped>
+<style lang="less">
 
   .schema-wrap {
-    max-width: 430px;
-    margin: 20px;
+		width: 360px;
+		margin: 15px;
+		display: inline-block;
+		vertical-align: top;
+		/* 初始化样式 */
+		.el-card__header {
+			padding: 10px 15px;
+		}
+		.el-card__body {
+			padding: 10px 15px;
+		}
+
+		.schema-wrap-hearder {
+			font-size: 16px;
+			font-weight: 400;
+			i {
+				font-size: 22px;
+				padding-right: 5px;
+        font-weight: normal;
+        vertical-align: middle;
+      }
+      span {
+        vertical-align: middle;
+      }
+			.icon-QQ {
+				color: #2D8DFB;
+			}
+			.icon-weixin {
+				color: #02CD11;
+			}
+			.icon-zhifubao {
+				color: #03A6FF
+			}
+			.icon-weibiaoti- {
+				color: #C81523;
+			}
+		}
+		.schema-wrap-body {
+			.noDesc {
+				text-align: center;
+				color: #777777;
+			}
+		}
     .schema-wrap-footer {
       width: 100%;
       text-align: center;

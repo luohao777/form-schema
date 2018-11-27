@@ -1,4 +1,4 @@
-// import formLabelMixin from './formLabel'
+import formLabelMixin from './formLabel'
 
 export const editableMixin = {
 	computed: {
@@ -54,7 +54,7 @@ export const modalMixin = {
 		}
 	},
 
-	mixins: [editableMixin],
+	mixins: [formLabelMixin, editableMixin],
 
 	data() {
 		return {
@@ -93,7 +93,7 @@ export const modalMixin = {
  */
 export const modalParentMixin = {
 
-	// mixins: [formLabelMixin],
+	mixins: [formLabelMixin],
 
 	methods: {
 		/**

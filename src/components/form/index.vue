@@ -3,6 +3,7 @@
     <schema
       :schema="config"
       :map="map"
+      api="subMerchant/config"
     >
     </schema>
   </div>

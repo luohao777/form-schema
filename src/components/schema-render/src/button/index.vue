@@ -3,7 +3,7 @@
     @click="handlerClick"
     :placeholder="config.desc"
   >
-    {{ config.wrapType === 'class' ? config.title : '操作' }}
+    {{ config.title }}
   </elButton>
 </template>
 
