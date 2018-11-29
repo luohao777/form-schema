@@ -3,10 +3,7 @@ export default {
   select: 'elSelect',
   option: 'elOption',
   input: 'elInput',
-  textarea: {
-    name: 'elInput',
-    type: 'textarea'
-  },
+  textarea: 'elInput',
   wrap: 'elCard',
   button: 'elButton'
 }

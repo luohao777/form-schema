@@ -1,38 +1,22 @@
 <template>
-  <elForm
-    :model="search"
-		:class="contentType !== 'table' ? 'l_dialog_form' : 'searchBar'"
-		label-position="right"
-		:label-width="formLabelWidth"
-		@submit.native.prevent
-  >
-    <SchemaFormItem
-      v-for="(i, index) in schema"
-      :key="index"
-      :label="i.value"
-      :props="i.key"
-      v-model="search[i.key]"
-    />
-
-  </elForm>
 </template>
 <script>
-	import SchemaFormItem from './formItem'
+	// import SchemaFormItem from './formItem'
 	import formLabelWidth from '@/mixins/formLabel'
 
   export default {
     name: 'schema-form',
 
-		components: { SchemaFormItem },
+		// components: { SchemaFormItem },
 
 		mixins: [ formLabelWidth ],
 
     props: {
 			schema: Array,
 
-      data: Object,
+      contentType: String,
 
-      contentType: String
+      store: Object
     },
 
     data() {
@@ -40,17 +24,34 @@
         search: {},
         loading: false
       }
-		},
+    },
+
+    mounted() {
+      this.setRules(this.schema)
+    },
+
+    methods: {
+      setRules(s) {
+        for (const i of s) {
+          this.search[i.key] = ''
+        }
+      },
+      clearForm() {
+        this.search = {}
+        this.$refs['form'].resetFields()
+      },
+      handerInput(val, key) {
+        this.search[key] = val
+        this.$emit('change', this.search)
+      }
+    },
 
 		watch: {
-			search: {
-				deep: true,
-				handler(val) {
-					if (val) {
-						this.$emit('change', val)
-					}
-				}
-			}
+      schema(val) {
+        if (val) {
+          this.setRules(val)
+        }
+      }
 		}
   }
 </script>

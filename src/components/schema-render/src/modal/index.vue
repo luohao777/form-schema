@@ -8,18 +8,59 @@
     width="800px"
   >
 		<!-- Form -->
-    <SchemaForm
+    <!-- <SchemaForm
+      ref="sform"
+      :store="store"
       :schema="propsData.params"
-			:data="search"
       :contentType="contentType"
 			@change="handlerChange"
-    />
+    /> -->
+
+    <elForm
+      :model="search"
+      :class="contentType !== 'table' ? 'l_dialog_form' : 'searchBar'"
+      label-position="right"
+      :label-width="formLabelWidth"
+      @submit.native.prevent
+      ref="form"
+    >
+
+      <elFormItem
+        v-for="(i, index) in propsData.params"
+        :key="index"
+        :label="i.value"
+        :prop="i.key"
+      >
+        <elSelect
+          v-if="i.type === 'select'"
+          v-model="search[i.key]">
+          <elOption
+            v-for="option in i.options"
+            :key="option.key"
+            :label="option.key"
+            :value="option.value"
+          />
+        </elSelect>
+
+        <elInput
+          v-else-if="i.type === 'textarea'"
+          type="textarea"
+          v-model="search[i.key]">
+        </elInput>
+
+        <elInput
+          v-else
+          v-model="search[i.key]"
+        >
+        </elInput>
+
+      </elFormItem>
+    </elForm>
 
     <!-- Content -->
     <div
       class="resWrap"
-      v-if="contentType === 'form'"
-
+      v-if="contentType === 'query'"
     >
       <elInput
         v-model="res"
@@ -69,20 +110,20 @@
 
 <script>
   import { apiPost } from '@/services'
-  import { handleErr, parseData } from '@/utils'
+  import { handleErr } from '@/utils'
   import { modalMixin } from '@/mixins/modal'
-  import SchemaForm from './form'
+  // import SchemaForm from './form'
 
   export default {
     name: 'schema-modal',
 
-    components: { SchemaForm },
+    // components: { SchemaForm },
 
 		mixins: [modalMixin],
 
 		props: {
 			store: Object
-		},
+    },
 
     data() {
       return {
@@ -112,6 +153,7 @@
     },
 
     methods: {
+
       save() {
 				this.loading = true
 				// Schema 表单产生的数据
@@ -154,11 +196,7 @@
             handleErr(res.message)
           }
         }).then(this.loading = false)
-			},
-
-			handlerChange(val) {
-				this.search = parseData(val)
-			}
+      }
     },
 
     watch: {
@@ -166,7 +204,7 @@
 				if (val) {
 					this.visible = val
 				}
-			}
+      }
 		}
   }
 </script>

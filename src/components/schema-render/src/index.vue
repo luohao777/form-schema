@@ -3,7 +3,7 @@
 	import { EMPTY_FUNCTION, moduleDefaultProperty } from './config'
 
   import SchemaWrap from './wrap/wrap'
-  import SchemaStore from './schema-stroe'
+  import SchemaStore from './schema-store'
   import SchemaModal from './modal'
 
   function parseSchema(s) {
