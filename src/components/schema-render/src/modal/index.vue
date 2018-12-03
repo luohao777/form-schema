@@ -42,7 +42,6 @@
 
 				<querySelect
 					v-else-if="i.type === 'querySelect'"
-					:key="i.key"
           v-model="search[i.key]"
 					custom-name="payType"
 					:url="i.api"
