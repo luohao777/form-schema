@@ -1,0 +1,3 @@
+<template>
+  <elInput></elInput>
+</template>

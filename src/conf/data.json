@@ -103,7 +103,7 @@
     "children": [{
       "title": "微信商户进件",
       "icon": "wechat",
-      "type": "table",
+      "type": "query",
       "data": {
         "opcode": "apply"
       },
@@ -131,7 +131,8 @@
       "params": [{
         "key": "appid",
         "value": "Appid",
-        "type": "input"
+        "type": "input",
+        "desc": "表单描述"
       }, {
         "key": "secret",
         "value": "secret",

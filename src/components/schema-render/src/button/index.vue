@@ -1,6 +1,7 @@
 <template>
   <elButton
     @click="handlerClick"
+		type="text"
     :placeholder="config.desc"
   >
     {{ config.title }}

@@ -1,4 +1,3 @@
-
 <script>
 	import Button from '../button'
 
@@ -45,11 +44,12 @@
           {
             props: {
               store,
-              config
+							config
 						},
-						'style': {
+						style: {
 							'display': isBatch && !item.batch ? 'none' : 'inline-block'
-						}
+						},
+						class: 'schema-wrap-footer-button'
           }
         )
       })
@@ -58,7 +58,8 @@
       'div',
       {
         class: {
-          'schema-wrap-footer': true
+					'schema-wrap-footer': true,
+					'schema-wrap-footer-class': footerChildrenNode.length > 0
         }
       },
       [ ...footerChildrenNode ]
@@ -72,18 +73,6 @@
     props: {
 			store: Object,
 			propsData: Object
-			// batch: [Boolean, Number],
-			// opcode: String,
-      // icon: String,
-      // title: { // form 表单 table 表格
-      //   type: String,
-      //   required: true
-      // },
-      // desc: String,
-      // type: String,
-      // params: Array,
-			// children: Array,
-      // wrapType: String // class 类 module 单个模块
     },
 
 		// 单个Wrap, 其中存在 Header, body, Footer 三个子节点
@@ -128,7 +117,7 @@
 <style lang="less">
 
   .schema-wrap {
-		width: 360px;
+		width: 460px;
 		margin: 15px;
 		display: inline-block;
 		vertical-align: top;
@@ -137,7 +126,7 @@
 			padding: 10px 15px;
 		}
 		.el-card__body {
-			padding: 10px 15px;
+			padding: 10px 15px 5px;
 		}
 
 		.schema-wrap-hearder {
@@ -172,8 +161,24 @@
 			}
 		}
     .schema-wrap-footer {
-      width: 100%;
-      text-align: center;
-    }
+			width: 100%;
+			display: flex;
+			text-align: center;
+			justify-content: space-around;
+			align-items: center;
+		}
+		.schema-wrap-footer-class {
+			border-top: 1px solid #E9EEEE;
+		}
+
+		.schema-wrap-footer-button {
+			flex: 1;
+			border-right: 1px solid #E9EEEE;
+			margin: 5px 0 0;
+		}
+
+		.schema-wrap-footer-button:last-child {
+			border-right: none;
+		}
   }
 </style>

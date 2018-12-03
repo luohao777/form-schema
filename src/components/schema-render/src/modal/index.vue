@@ -7,18 +7,10 @@
     append-to-body
     width="800px"
   >
-		<!-- Form -->
-    <!-- <SchemaForm
-      ref="sform"
-      :store="store"
-      :schema="propsData.params"
-      :contentType="contentType"
-			@change="handlerChange"
-    /> -->
 
     <elForm
       :model="search"
-      :class="contentType !== 'table' ? 'l_dialog_form' : 'searchBar'"
+      :class="contentType !== 'query' ? 'l_dialog_form' : 'searchBar'"
       label-position="right"
       :label-width="formLabelWidth"
       @submit.native.prevent
@@ -48,11 +40,28 @@
           v-model="search[i.key]">
         </elInput>
 
+				<querySelect
+					v-else-if="i.type === 'querySelect'"
+					:key="i.key"
+          v-model="search[i.key]"
+					custom-name="payType"
+					:url="i.api"
+					allOption
+					auto
+				/>
+
         <elInput
           v-else
           v-model="search[i.key]"
         >
         </elInput>
+
+				<div
+					class="l_item_desc"
+					v-if="i.desc"
+				>
+					{{i.desc}}
+				</div>
 
       </elFormItem>
     </elForm>
@@ -67,6 +76,7 @@
         type="textarea"
         :autosize="{ minRows: 2 }"
         :disabled="disabled"
+				:placeholder="$t('app.sentence.querySelect')"
       >
       </elInput>
     </div>
@@ -112,12 +122,12 @@
   import { apiPost } from '@/services'
   import { handleErr } from '@/utils'
   import { modalMixin } from '@/mixins/modal'
-  // import SchemaForm from './form'
+	import querySelect from '@/components/querySelect'
 
   export default {
     name: 'schema-modal',
 
-    // components: { SchemaForm },
+    components: { querySelect },
 
 		mixins: [modalMixin],
 
@@ -138,11 +148,11 @@
       contentType() {
         const { type } = this.propsData
         const formKeyWords = ['new', 'edit', 'form']
-        const tableKeyWords = ['table', 'query']
+        const queryKeyWords = ['query']
         if (formKeyWords.indexOf(type) > -1) {
           return 'form'
-        } else if (tableKeyWords.indexOf(type) > -1) {
-          return 'table'
+        } else if (queryKeyWords.indexOf(type) > -1) {
+          return 'query'
         } else {
           if (this.visible) {
             const { title } = this.propsData
@@ -153,6 +163,10 @@
     },
 
     methods: {
+			clearExtra() {
+				this.disabled = true
+				this.res = ''
+			},
 
       save() {
 				this.loading = true
@@ -179,18 +193,20 @@
 			},
 
 			onSearch() {
+				const { search } = this
         // 全局data: 来自组件传输, 非Schema 交互产生的数据;
 				const { data, api } = this.store.states
 				// Module Data: 每个模块里独有的数据
 				const { data: moduleData } = this.propsData
 				const postData = {
 					...data,
-					...moduleData
+					...moduleData,
+					params: { ...search }
 				}
         apiPost(api, postData).then(res => {
           if (res.statusCode === 200) {
             this.$message(res.message)
-            this.disabled = true
+						this.disabled = false
 						this.res = res.content
           } else {
             handleErr(res.message)
@@ -213,4 +229,11 @@
 .resWrap {
   margin: 10px 30px;
 }
+.l_item_desc {
+  height: 30px;
+  line-height: 30px;
+	font-size: 14px;
+  color: #909399;
+}
+
 </style>
